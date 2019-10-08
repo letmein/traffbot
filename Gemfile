@@ -7,4 +7,5 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 gem 'apparition'
 gem 'capybara'
 gem 'pry'
+gem 'rake'
 gem 'whenever', require: false
