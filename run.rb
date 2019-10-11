@@ -5,7 +5,12 @@ require 'capybara'
 require 'capybara/apparition'
 require 'pry'
 
+require_relative './lib/telegram/send_photo'
+
 config = YAML.safe_load(IO.read('./secrets.yml'))
+telegram_config = config['telegram']
+bot_token = telegram_config['bot_token']
+chat_id = telegram_config['chat_id']
 
 Capybara.register_driver :apparition do |app|
   Capybara::Apparition::Driver.new(app, window_size: [1400, 900])
@@ -28,23 +33,7 @@ file = Tempfile.new(['screenshot', '.png'])
 
 begin
   session.save_screenshot(file.path)
-
-  telegram_config = config['telegram']
-  bot_token = telegram_config['bot_token']
-  chat_id = telegram_config['chat_id']
-
-  uri = URI("https://api.telegram.org/bot#{bot_token}/sendPhoto")
-  request = Net::HTTP::Post.new(uri)
-  form_data = [['photo', file], ['chat_id', chat_id.to_s]]
-
-  request.set_form(form_data, 'multipart/form-data')
-
-  use_ssl = uri.scheme == 'https'
-
-  response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: use_ssl) do |http|
-    http.request(request)
-  end
-
+  response = Telegram::SendPhoto.new(bot_token, chat_id).call(file)
   puts response.code.to_s
 ensure
   file.close
