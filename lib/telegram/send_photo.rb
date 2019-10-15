@@ -7,9 +7,9 @@ module Telegram
       @chat_id = chat_id.to_s
     end
 
-    def call(file)
+    def call(file, caption = nil)
       request = Net::HTTP::Post.new(uri)
-      request.set_form(form_data(file), 'multipart/form-data')
+      request.set_form(form_data(file, caption), 'multipart/form-data')
 
       Net::HTTP.start(uri.hostname, uri.port, use_ssl: ssl?) do |http|
         http.request(request)
@@ -20,8 +20,13 @@ module Telegram
 
     attr_reader :bot_token, :chat_id
 
-    def form_data(file)
-      [['photo', file], ['chat_id', chat_id]]
+    def form_data(file, caption)
+      params = [
+        ['photo', file],
+        ['chat_id', chat_id]
+      ]
+      params << ['caption', caption] if caption
+      params
     end
 
     def uri
