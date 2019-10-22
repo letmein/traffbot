@@ -24,7 +24,7 @@ module Telegram
       params = [
         ['photo', file],
         ['chat_id', chat_id],
-        ['disable_notification', true]
+        ['disable_notification', 'true']
       ]
       params << ['caption', caption] if caption
       params
