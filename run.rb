@@ -7,11 +7,11 @@ require 'webdrivers/chromedriver'
 
 require_relative './lib/telegram/send_photo'
 
-config = YAML.safe_load(IO.read('./secrets.yml'))
+config = YAML.safe_load(IO.read('./config/secrets.yml'))
 telegram_config = config['telegram']
 bot_token = telegram_config['bot_token']
 chat_id = telegram_config['chat_id']
-url = config['sources'][0] || raise('No sources specified')
+url = config['sources']['pool'] || raise('No sources specified')
 
 # app = ->(_env) { [200, {'Content-Type' => 'text/html'}, ['OK']] }
 app = nil
@@ -27,7 +27,7 @@ caption = "#{distance}, #{estimate}".downcase
 session.find('.sidebar-toggle-button__icon').click
 session.assert_selector('.sidebar-view._collapsed')
 
-sleep 3
+sleep 5
 
 file = Tempfile.new(['screenshot', '.png'])
 
