@@ -11,13 +11,12 @@ config = YAML.safe_load(IO.read('./secrets.yml'))
 telegram_config = config['telegram']
 bot_token = telegram_config['bot_token']
 chat_id = telegram_config['chat_id']
+url = config['sources'][0] || raise('No sources specified')
 
 # app = ->(_env) { [200, {'Content-Type' => 'text/html'}, ['OK']] }
 app = nil
 session = Capybara::Session.new(:selenium_chrome_headless, app)
 session.driver.browser.manage.window.resize_to(1400, 900)
-
-url = config['sources'][0] || raise('No sources specified')
 
 session.visit(url)
 
